@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Docker Manager - Chaga</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <h1><i class="fab fa-docker"></i> Docker Manager</h1>
+            <div class="header-actions">
+                <button class="btn btn-outline" onclick="loadContainers()">
+                    <i class="fas fa-sync-alt"></i> Actualizar
+                </button>
+                <button class="btn btn-settings" onclick="openSettingsModal()">
+                    <i class="fas fa-cog"></i> Configuración
+                </button>
+                <button class="btn btn-primary" onclick="openServiceModal()">
+                    <i class="fas fa-plus"></i> Crear Servicio
+                </button>
+                <button class="btn btn-secondary" onclick="openChatModal()">
+                    <i class="fas fa-robot"></i> Asistente Inteligente
+                </button>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="containers-grid" id="containersGrid">
+                <!-- Container Card Example -->
+                <div class="container-card">
+                    <div class="card-header">
+                        <div class="status-indicator running"></div>
+                        <h3>nginx-web-server</h3>
+                        <span class="container-id">#a1b2c3d4</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="service-info">
+                            <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nginx/nginx-original.svg" alt="Nginx" class="service-icon">
+                            <div class="service-details">
+                                <p><strong>Servicio:</strong> Nginx</p>
+                                <p><strong>Puerto:</strong> 80:8080</p>
+                                <p><strong>Estado:</strong> <span class="status running">Ejecutándose</span></p>
+                                <p><strong>Uptime:</strong> 2h 34m</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-actions">
+                        <button class="btn-icon" title="Ver logs">
+                            <i class="fas fa-file-alt"></i>
+                        </button>
+                        <button class="btn-icon" title="Parar">
+                            <i class="fas fa-stop"></i>
+                        </button>
+                        <button class="btn-icon" title="Reiniciar">
+                            <i class="fas fa-redo"></i>
+                        </button>
+                        <button class="btn-icon danger" title="Eliminar">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Service Selection Modal -->
+    <div id="serviceModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-plus"></i> Crear Nuevo Servicio</h2>
+                <span class="close" onclick="closeServiceModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <p>Selecciona los servicios que deseas desplegar:</p>
+                <div class="services-grid" id="servicesGrid">
+                    <!-- Services will be populated by JavaScript -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeServiceModal()">Cancelar</button>
+                <button class="btn btn-primary" onclick="createServices()" id="createBtn" disabled>
+                    <i class="fas fa-rocket"></i> Crear Servicios
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chat Modal -->
+    <div id="chatModal" class="modal">
+        <div class="modal-content chat-modal">
+            <div class="modal-header">
+                <h2><i class="fas fa-robot"></i> Asistente Inteligente</h2>
+                <span class="close" onclick="closeChatModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="chat-container">
+                    <div class="chat-messages" id="chatMessages">
+                        <div class="message bot-message">
+                            <div class="message-avatar">
+                                <i class="fas fa-robot"></i>
+                            </div>
+                            <div class="message-content">
+                                <p>¡Hola! Soy tu asistente de Docker. ¿En qué puedo ayudarte hoy?</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="chat-input-container">
+                        <input type="text" id="chatInput" placeholder="Escribe tu mensaje..." onkeypress="handleChatKeyPress(event)">
+                        <button onclick="sendMessage()" id="sendBtn">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div id="settingsModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-cog"></i> Configuración</h2>
+                <span class="close" onclick="closeSettingsModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="setting-group">
+                    <label for="apiEndpoint">URL del API (n8n webhook):</label>
+                    <input type="url" id="apiEndpoint" placeholder="http://localhost:5678/webhook/...">
+                    <small class="help-text">Introduce la URL completa del webhook de n8n</small>
+                </div>
+                
+                <div class="setting-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="devMode">
+                        <span class="checkmark"></span>
+                        Modo desarrollo (respuestas simuladas)
+                    </label>
+                </div>
+                
+                
+                <div class="setting-group">
+                    <label>Estado de la conexión:</label>
+                    <div class="connection-status" id="connectionStatus">
+                        <span class="status-dot unknown"></span>
+                        <span>Sin probar</span>
+                    </div>
+                    <button class="btn btn-test" onclick="testConnection()" id="testBtn">
+                        <i class="fas fa-plug"></i> Probar Conexión
+                    </button>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeSettingsModal()">Cancelar</button>
+                <button class="btn btn-primary" onclick="saveSettings()">
+                    <i class="fas fa-save"></i> Guardar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="loading-spinner">
+            <i class="fas fa-spinner fa-spin"></i>
+            <p>Procesando...</p>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
