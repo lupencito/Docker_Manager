@@ -1,0 +1,61 @@
+{
+  "name": "execute_ssh_command",
+  "nodes": [
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "id": "c055762a-8fe7-4141-a639-df2372f30060",
+      "typeVersion": 1.1,
+      "name": "When Executed by Another Workflow",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "position": [
+        240,
+        352
+      ]
+    },
+    {
+      "parameters": {
+        "command": "={{ $json.query }}"
+      },
+      "type": "n8n-nodes-base.ssh",
+      "typeVersion": 1,
+      "position": [
+        432,
+        352
+      ],
+      "id": "3710096e-d070-414c-9288-20bfd592b10a",
+      "name": "conseguir-puerto-disponible",
+      "credentials": {
+        "sshPassword": {
+          "id": "ygktJCRnbRu84ao4",
+          "name": "SSH Password account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "conseguir-puerto-disponible",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "6075ec74-5fce-4f8d-9eb8-b8014053c6b5",
+  "meta": {
+    "instanceId": "aa4facc11d41af4f5626938d1804cf73a9cccc1fca762db451013c4069361abc"
+  },
+  "id": "Zyd0apdqKnRE71W5",
+  "tags": []
+}

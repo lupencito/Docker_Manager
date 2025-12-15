@@ -1,0 +1,239 @@
+{
+  "name": "container_management",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "cb9ca299-e31e-4cd9-a0a6-3f03825479db",
+        "responseMode": "responseNode",
+        "options": {
+          "allowedOrigins": "*,null,192.168.11.192,192.168.11.120,192.168.1.101,localhost,0.0.0.0"
+        }
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -720,
+        -64
+      ],
+      "id": "2d35fc9a-6c88-4d9d-a391-9f7b0a6e7dd2",
+      "name": "Create-Docker-Webhook1",
+      "webhookId": "cb9ca299-e31e-4cd9-a0a6-3f03825479db"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "Eres un asistente experto en la gestión de contenedores Docker. Estás en un chat en vivo hablando en tiempo real con un usuario.\n\nResponde únicamente a peticiones de gestión de servicios y contenedores de Docker, no respondas a peticiones genéricas que no tengan que ver con esto.\n\nResponde siempre en Español.\n\nTu objetivo es crear, modificar y gestionar contenedores de docker de forma personalizada según las peticiones del usuario.\n\nEl usuario te podrá pedir crear un contenedor con un servicio específico, o te pedirá crear varios servicios al mismo tiempo.\n\nSi el usuario te pide crear un único servicio, puedes ejecutar el servicio con un comando de docker run sencillo, identificando primero que el puerto y el nombre del contenedor estén libres.\n\nSi el usuario quiere algo más avanzado, como crear varios servicios entre ellos en una misma red, o montando un servicio que requiera de volúmenes personalizados, deberás de ejecutar los comandos de forma secuencial para realizar todo el trabajo.\n\nSe te permite crear y utilizar ficheros de docker-compose en caso de ser necesario.\n\nLa interacción con el usuario deberá de ser mínima, intenta solucionar los problemas primero antes de contactar con el usuario.\n\nAl finalizar el trabajo, hazle un resumen mínimo de lo que hiciste y cómo acceder a los servicios creados en caso de haber creado unos nuevos.\n\nEjecuta únicamente comandos DOCKER, hazlo lo más sencillo posible.\n\nTodos los servicios creados se deberán de poder acceder desde fuera de localhost.\n\nINSTRUCCIONES PARA SERVICIOS ESPECÍFICOS:\nServicio \"FileBrowser\": El usuario por defecto será 'admin', la contraseña se genera automáticamente y está en los logs del contenedor de filebrowser. Deberás de indicarle la contraseña al usuario al crear el servicio."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        -256,
+        -64
+      ],
+      "id": "161dfb9c-ab07-4c18-be3c-c0c0f0c4365e",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": "x-ai/grok-4-fast",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        -272,
+        192
+      ],
+      "id": "8f06bc97-62cd-47b1-a96b-1fec196f1aa3",
+      "name": "OpenRouter Chat Model",
+      "credentials": {
+        "openRouterApi": {
+          "id": "xvBtvT8ElaIdDTx8",
+          "name": "OpenRouter account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "8e15d4ab-de39-4f63-9dd8-31c0b62e4ada",
+              "name": "=chatInput",
+              "value": "={{ $json.body.components }}",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -480,
+        -64
+      ],
+      "id": "1f922a34-57a7-4e36-a094-2e166660c929",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "description": "Call this tool to execute a Linux Terminal \"Command\" in the host machine of the user. Use this tool to get information like available ports (netstat -tuln | grep LISTEN), available container names, and any relevant information.",
+        "workflowId": {
+          "__rl": true,
+          "value": "Zyd0apdqKnRE71W5",
+          "mode": "list",
+          "cachedResultName": "execute_ssh_command"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        -96,
+        192
+      ],
+      "id": "3a7b0536-50f7-43d5-8f5a-c55604c17570",
+      "name": "execute_command"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        96,
+        -64
+      ],
+      "id": "9d27ad86-1ba7-4638-8787-309328f9b5a2",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "2"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        -688,
+        304
+      ],
+      "id": "c5aa8287-aa5c-45ee-b765-f49d0854454c",
+      "name": "memoria_contexto"
+    }
+  ],
+  "pinData": {
+    "Create-Docker-Webhook1": [
+      {
+        "json": {
+          "headers": {
+            "host": "192.168.11.192:5678",
+            "connection": "keep-alive",
+            "content-length": "24",
+            "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
+            "accept": "application/json",
+            "content-type": "application/json",
+            "sec-gpc": "1",
+            "accept-language": "es-ES,es;q=0.5",
+            "origin": "http://localhost:8081",
+            "referer": "http://localhost:8081/",
+            "accept-encoding": "gzip, deflate"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "components": [
+              "nginx"
+            ]
+          },
+          "webhookUrl": "http://localhost:5678/webhook/cb9ca299-e31e-4cd9-a0a6-3f03825479db",
+          "executionMode": "production"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Create-Docker-Webhook1": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "execute_command": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "memoria_contexto": {
+      "ai_memory": [
+        []
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "6f385322-2fe5-4e53-8e3a-48f9cb3f8ded",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "aa4facc11d41af4f5626938d1804cf73a9cccc1fca762db451013c4069361abc"
+  },
+  "id": "lNkj2X4ehb9DDSca",
+  "tags": []
+}
