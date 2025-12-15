@@ -30,6 +30,23 @@ container_management.json, execute_ssh_command.json: copia de la automatización
 index.html, script.js, styles.css: copia de la interfaz web.
 server.py: Proxy CORS
 
+-Guía de usuario
+Instalar Docker en Debian.
+Importar archivos a n8n.
+Arrancar docker n8n con el comando: docker run -it --rm
+--name n8n
+-p 5678:5678
+-e GENERIC_TIMEZONE="Africa/Casablanca"
+-e TZ="Africa/Casablanca"
+-e N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS=true
+-e N8N_RUNNERS_ENABLED=true
+-e N8N_SECURE_COOKIE=false
+-v n8n_data:/home/node/.n8n
+docker.n8n.io/n8nio/n8n
+Verificar que la ip de conexión del webhook es la correcta.
+Ejecutar el Proxy CORS en Debian con: Python3 server.py.
+Ejecutar el index.html para acceder al Docker Manager.
+
 -Autor
 Nombre: Santiago Manuel Escuder Pérez
 
