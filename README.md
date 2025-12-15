@@ -25,9 +25,16 @@ SO Base: Linux Debian 12.11.
 
 Herramientas: Portainer (opcional), Git, Terminal de comandos.
 
+-Indice de archivos
+container_management.json, execute_ssh_command.json: copia de la automatización n8n.
+index.html, script.js, styles.css: copia de la interfaz web.
+server.py: Proxy CORS
+
 -Autor
 Nombre: Santiago Manuel Escuder Pérez
 
 Tutor: Ernesto Fábregas Acosta
 
 Institución: UNED (Universidad Nacional de Educación a Distancia)
+
+
